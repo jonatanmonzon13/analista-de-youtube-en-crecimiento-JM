@@ -273,7 +273,12 @@
      archivo "autorizados.json" del repositorio.
    ════════════════════════════════════════════════════════════════ */
 const GOOGLE_CLIENT_ID = '894770388392-6ooskd5t6oit8r1hcr86gn6j60s6m982.apps.googleusercontent.com';
-let AUTORIZADOS = [];   // se rellena al cargar desde autorizados.json
+let AUTORIZADOS = [{
+  "permitidos": [
+    "joanatanmonzon13@gmail.com",
+    "joanatanmonzon1126@gmail.com"
+  ]
+}];   // se rellena al cargar desde autorizados.json
 /* ════════════════════════════════════════════════════════════════ */
 
 const $ = s => document.querySelector(s);
