@@ -101,7 +101,8 @@
   .mock-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--bg2)}
   .mock-row:last-child{margin-bottom:0}
   .mock-thumb{width:88px;height:50px;border-radius:8px;background:linear-gradient(135deg,#1c2740,#243355);position:relative;overflow:hidden;flex:none}
-  .mock-thumb::after{content:"▶";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6);font-size:13px}
+  .mock-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .mock-thumb::after{content:"▶";position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.8);font-size:13px;text-shadow:0 1px 6px rgba(0,0,0,.6)}
   .mr-title{font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);line-height:1.3}
   .mr-sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px}
   .mr-vsr{font-family:var(--mono);font-weight:700;font-size:22px;text-align:right;line-height:1;
@@ -128,9 +129,11 @@
   .marquee-mask:hover .marquee{animation-play-state:paused}
   @keyframes scroll{to{transform:translateX(-50%)}}
   .ocard{width:268px;flex:none;background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 14px 34px rgba(0,0,0,.34)}
-  .ocard .oth{height:150px;position:relative;display:flex;align-items:flex-end;justify-content:flex-start;padding:10px}
-  .ocard .vsrtag{position:absolute;top:10px;right:10px;font-family:var(--mono);font-weight:700;font-size:13px;color:#0A0D14;background:linear-gradient(100deg,var(--gold),var(--gold2));border-radius:8px;padding:4px 10px;box-shadow:0 6px 18px rgba(231,184,92,.4)}
-  .ocard .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-size:26px}
+  .ocard .oth{height:150px;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:flex-start;padding:10px}
+  .ocard .oth img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .ocard .oth .ov{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.5))}
+  .ocard .vsrtag{position:absolute;top:10px;right:10px;z-index:2;font-family:var(--mono);font-weight:700;font-size:13px;color:#0A0D14;background:linear-gradient(100deg,var(--gold),var(--gold2));border-radius:8px;padding:4px 10px;box-shadow:0 6px 18px rgba(231,184,92,.4)}
+  .ocard .play{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85);font-size:26px;text-shadow:0 2px 12px rgba(0,0,0,.6)}
   .ocard .obody{padding:14px}
   .ocard h4{font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink);margin:0 0 12px;line-height:1.32;height:2.6em;overflow:hidden}
   .ocard .ostats{display:grid;grid-template-columns:1fr 1fr;gap:10px 8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
@@ -319,17 +322,17 @@
           <div class="gobtn">Buscar outliers</div>
         </div>
         <div class="mock-row">
-          <div class="mock-thumb"></div>
+          <div class="mock-thumb"><img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg" onerror="this.remove()" alt="" loading="lazy"></div>
           <div><div class="mr-title">Hice esto y no podía creer el resultado</div><div class="mr-sub">CocinaExpress · 1.240 subs · 892.000 vistas</div></div>
           <div class="mr-vsr">719×<small>VSR</small></div>
         </div>
         <div class="mock-row">
-          <div class="mock-thumb" style="background:linear-gradient(135deg,#2a1f3d,#3d2a55)"></div>
+          <div class="mock-thumb" style="background:linear-gradient(135deg,#2a1f3d,#3d2a55)"><img src="https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg" onerror="this.remove()" alt="" loading="lazy"></div>
           <div><div class="mr-title">El error que arruina tu desayuno keto</div><div class="mr-sub">SaludReal · 3.400 subs · 510.000 vistas</div></div>
           <div class="mr-vsr">150×<small>VSR</small></div>
         </div>
         <div class="mock-row">
-          <div class="mock-thumb" style="background:linear-gradient(135deg,#1f3d2f,#2a553e)"></div>
+          <div class="mock-thumb" style="background:linear-gradient(135deg,#1f3d2f,#2a553e)"><img src="https://i.ytimg.com/vi/kJQP7kiw5Fk/hqdefault.jpg" onerror="this.remove()" alt="" loading="lazy"></div>
           <div><div class="mr-title">3 ingredientes. 0 azúcar. Adictivo.</div><div class="mr-sub">FitCocina · 8.900 subs · 410.000 vistas</div></div>
           <div class="mr-vsr">46×<small>VSR</small></div>
         </div>
@@ -564,18 +567,20 @@
 <script>
 /* ───────── DATOS DEMO DEL FEED ───────── */
 const SAMPLE = [
-  {t:"Hice esto y no podía creer el resultado", v:719, views:"892K", subs:"1.2K", date:"04/06/2026", g:"linear-gradient(135deg,#1c2740,#243355)"},
-  {t:"El error que arruina tu desayuno keto", v:150, views:"510K", subs:"3.4K", date:"01/06/2026", g:"linear-gradient(135deg,#2a1f3d,#3d2a55)"},
-  {t:"3 ingredientes, 0 azúcar, adictivo", v:46, views:"410K", subs:"8.9K", date:"28/05/2026", g:"linear-gradient(135deg,#1f3d2f,#2a553e)"},
-  {t:"Nadie te cuenta esto sobre dormir", v:233, views:"1.1M", subs:"4.7K", date:"22/05/2026", g:"linear-gradient(135deg,#3d2a1f,#553a2a)"},
-  {t:"Probé el método japonés por 30 días", v:88, views:"640K", subs:"7.3K", date:"19/05/2026", g:"linear-gradient(135deg,#1f2c3d,#2a3f55)"},
-  {t:"La verdad detrás de este truco viral", v:412, views:"2.3M", subs:"5.6K", date:"15/05/2026", g:"linear-gradient(135deg,#2d1f3d,#412a55)"},
-  {t:"Compré lo más barato de Amazon", v:61, views:"380K", subs:"6.2K", date:"11/05/2026", g:"linear-gradient(135deg,#1f3d3a,#2a5550)"},
-  {t:"Esto cambió mi rutina para siempre", v:174, views:"720K", subs:"4.1K", date:"07/05/2026", g:"linear-gradient(135deg,#3d1f2a,#552a3a)"},
+  {id:"dQw4w9WgXcQ", t:"Hice esto y no podía creer el resultado", v:719, views:"892K", subs:"1.2K", date:"04/06/2026", g:"linear-gradient(135deg,#1c2740,#243355)"},
+  {id:"9bZkp7q19f0", t:"El error que arruina tu desayuno keto", v:150, views:"510K", subs:"3.4K", date:"01/06/2026", g:"linear-gradient(135deg,#2a1f3d,#3d2a55)"},
+  {id:"kJQP7kiw5Fk", t:"3 ingredientes, 0 azúcar, adictivo", v:46, views:"410K", subs:"8.9K", date:"28/05/2026", g:"linear-gradient(135deg,#1f3d2f,#2a553e)"},
+  {id:"JGwWNGJdvx8", t:"Nadie te cuenta esto sobre dormir", v:233, views:"1.1M", subs:"4.7K", date:"22/05/2026", g:"linear-gradient(135deg,#3d2a1f,#553a2a)"},
+  {id:"OPf0YbXqDm0", t:"Probé el método japonés por 30 días", v:88, views:"640K", subs:"7.3K", date:"19/05/2026", g:"linear-gradient(135deg,#1f2c3d,#2a3f55)"},
+  {id:"fJ9rUzIMcZQ", t:"La verdad detrás de este truco viral", v:412, views:"2.3M", subs:"5.6K", date:"15/05/2026", g:"linear-gradient(135deg,#2d1f3d,#412a55)"},
+  {id:"60ItHLz5WEA", t:"Compré lo más barato de Amazon", v:61, views:"380K", subs:"6.2K", date:"11/05/2026", g:"linear-gradient(135deg,#1f3d3a,#2a5550)"},
+  {id:"RgKAFK5djSk", t:"Esto cambió mi rutina para siempre", v:174, views:"720K", subs:"4.1K", date:"07/05/2026", g:"linear-gradient(135deg,#3d1f2a,#552a3a)"},
 ];
 function ocard(d){
   return `<article class="ocard">
     <div class="oth" style="background:${d.g}">
+      <img src="https://i.ytimg.com/vi/${d.id}/hqdefault.jpg" onerror="this.remove()" alt="" loading="lazy">
+      <div class="ov"></div>
       <span class="vsrtag">${d.v}× VSR</span><span class="play">▶</span>
     </div>
     <div class="obody">
