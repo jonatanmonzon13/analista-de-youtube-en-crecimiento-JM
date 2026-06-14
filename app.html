@@ -98,8 +98,21 @@
   .chan{color:var(--muted);font-size:13px;margin-top:4px}
   .chan a{color:var(--blue2)}
 
+  /* Miniatura del video en la tarjeta */
+  .titlerow{display:flex;gap:15px;align-items:flex-start}
+  .thumb{width:150px;flex:none;aspect-ratio:16/9;border-radius:11px;overflow:hidden;position:relative;
+         display:block;background:var(--bg3);border:1px solid var(--line)}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.35));
+             opacity:0;transition:opacity .2s}
+  .thumb:hover .ov{opacity:1}
+  .thumb .pl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+             color:#fff;font-size:22px;text-shadow:0 2px 10px rgba(0,0,0,.6);opacity:.0;transition:opacity .2s}
+  .thumb:hover .pl{opacity:.95}
+  .titletext{min-width:0}
+
   /* Firma: VSR dorado */
-  .vsr{grid-row:1/3;text-align:right;font-family:var(--mono);font-weight:700;font-size:32px;
+  .vsr{grid-column:3;text-align:right;font-family:var(--mono);font-weight:700;font-size:32px;
        line-height:1;white-space:nowrap;color:var(--body)}
   .vsr small{display:block;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.16em;margin-top:7px}
   .vsr.high{background:linear-gradient(100deg,var(--gold),var(--gold2));
@@ -160,6 +173,8 @@
     .vsr{grid-row:auto;grid-column:1/3;text-align:left;margin-top:8px}
     .mid,.analysis,.masterbox{grid-column:1/3}
     .playercol{flex:1 1 100%}
+    .titlerow{gap:12px}
+    .thumb{width:108px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
@@ -179,6 +194,72 @@
   #gbtn{display:flex;justify-content:center;min-height:44px}
   .gmsg{color:var(--gold);font-family:var(--mono);font-size:12.5px;margin:18px 0 0!important;min-height:18px}
   #logout{display:none}
+  /* ═══ Pestañas y vistas ═══ */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 4px}
+  .tab{font-family:var(--display);font-weight:600;font-size:14px;color:var(--muted);
+       background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:10px 16px;cursor:pointer;
+       transition:color .15s,border-color .15s,background .15s}
+  .tab:hover{color:var(--ink);border-color:rgba(231,184,92,.35)}
+  .tab.on{color:var(--gold);border-color:var(--gold);background:var(--gold-soft)}
+  .view[hidden]{display:none}
+  .vtitle{font-family:var(--display);font-weight:700;font-size:24px;color:var(--ink);
+          margin:26px 0 4px;letter-spacing:-.02em}
+  .vsub{color:var(--muted);font-size:14px;margin:0 0 24px;max-width:62ch}
+  .vsub code{font-family:var(--mono);color:var(--gold);background:var(--bg3);padding:2px 6px;border-radius:5px}
+  .vsub b{color:var(--gold)}
+
+  /* ═══ Tarjetas de historial / guiones ═══ */
+  .hcard{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;
+         display:grid;grid-template-columns:120px 1fr auto;gap:6px 16px;align-items:center;
+         box-shadow:0 8px 22px rgba(0,0,0,.22)}
+  .hthumb{width:120px;aspect-ratio:16/9;border-radius:9px;overflow:hidden;background:var(--bg3);border:1px solid var(--line)}
+  .hthumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .hcard h4{font-family:var(--display);font-weight:600;font-size:15px;color:var(--ink);margin:0 0 5px;line-height:1.32}
+  .hmeta{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .hmeta b{color:var(--gold)}
+  .hact{display:flex;flex-direction:column;gap:7px}
+  .hact button{font-size:12.5px;padding:8px 13px;border-radius:8px;white-space:nowrap}
+  .hdetail{grid-column:1/4;border-top:1px solid var(--line);margin-top:8px;padding-top:6px}
+  .hdetail .analysis,.hdetail .seobox,.hdetail .masterbox{grid-column:auto}
+  .empty2{text-align:center;color:var(--muted);padding:46px 16px;font-family:var(--mono);font-size:13px;line-height:1.7}
+
+  /* ═══ Caja SEO ═══ */
+  .seobox{grid-column:1/4;margin-top:14px;background:var(--bg);border:1px solid var(--line);
+          border-left:3px solid #3ddc84;border-radius:12px;padding:18px;white-space:pre-wrap;
+          font-size:14px;line-height:1.62;color:var(--body)}
+  .seobox .seoh{font-family:var(--display);font-weight:700;font-size:13px;color:#3ddc84;
+                margin-bottom:10px;letter-spacing:.02em}
+
+  /* ═══ Panel de admin ═══ */
+  .adminbox{max-width:660px}
+  .addrow{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .addrow input{flex:1 1 240px;border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+                font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--bg3);outline:none}
+  .addrow input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+  .addrow button{padding:12px 22px;font-size:14px}
+  .emaillist{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
+  .erow{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);
+        border:1px solid var(--line);border-radius:10px;padding:11px 14px;
+        font-family:var(--mono);font-size:13px;color:var(--body)}
+  .erow .adm{color:var(--gold);font-size:9.5px;font-weight:700;letter-spacing:.1em;margin-left:10px;
+             border:1px solid rgba(231,184,92,.4);border-radius:5px;padding:2px 6px}
+  .erow button{background:transparent;border:1px solid var(--line);color:var(--muted);
+               border-radius:7px;padding:6px 12px;font-size:12px;font-family:var(--mono);font-weight:700;cursor:pointer}
+  .erow button:hover{border-color:#ff5f56;color:#ff5f56}
+  .jsonout{background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:12px;overflow:hidden}
+  .jsonhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 16px;
+            background:var(--blue-soft);border-bottom:1px solid var(--line);
+            font-family:var(--mono);font-size:12px;color:var(--blue2)}
+  .jsonout pre{margin:0;padding:16px;font-family:var(--mono);font-size:12.5px;color:var(--body);
+               white-space:pre-wrap;word-break:break-word;line-height:1.6}
+
+  @media (max-width:560px){
+    .hcard{grid-template-columns:1fr}
+    .hthumb{width:100%}
+    .hact{flex-direction:row}
+    .hdetail{grid-column:1}
+  }
+
 </style>
 </head>
 <body>
@@ -198,6 +279,7 @@
 <header class="wrap">
   <div class="brand">JM&nbsp;BOTS<span class="dot">.</span><span class="ol">outliers</span></div>
   <div style="display:flex;gap:8px;align-items:center">
+    <a class="gear" href="./index.html" style="text-decoration:none">← inicio</a>
     <div class="gear" onclick="toggleKeys()">⚙ claves</div>
     <div class="gear" id="logout" onclick="salir()">salir</div>
   </div>
@@ -221,6 +303,14 @@
     <span class="saved" id="savedMsg"></span>
   </section>
 
+  <nav class="tabs">
+    <button class="tab on" data-view="buscar" onclick="mostrarVista('buscar')">🔎 Buscar</button>
+    <button class="tab" data-view="historial" onclick="mostrarVista('historial')">🕘 Historial</button>
+    <button class="tab" data-view="guiones" onclick="mostrarVista('guiones')">📝 Mis guiones</button>
+    <button class="tab" id="tab-admin" data-view="admin" onclick="mostrarVista('admin')" style="display:none">🛡 Admin</button>
+  </nav>
+
+  <div id="view-buscar" class="view">
   <section class="hero">
     <svg class="spike" viewBox="0 0 210 120" fill="none" aria-hidden="true">
       <defs>
@@ -255,12 +345,58 @@
         <option value="MX">MX</option>
         <option value="AR">AR</option>
       </select>
+      <select id="maxSubs" title="Excluir canales con más suscriptores que esto">
+        <option value="0">sin tope de subs</option>
+        <option value="1000">≤ 1K subs</option>
+        <option value="5000">≤ 5K subs</option>
+        <option value="10000">≤ 10K subs</option>
+        <option value="50000" selected>≤ 50K subs</option>
+        <option value="100000">≤ 100K subs</option>
+      </select>
+      <select id="minViews" title="Pedir un mínimo de vistas">
+        <option value="0" selected>sin mín. vistas</option>
+        <option value="10000">≥ 10K vistas</option>
+        <option value="50000">≥ 50K vistas</option>
+        <option value="100000">≥ 100K vistas</option>
+        <option value="500000">≥ 500K vistas</option>
+      </select>
       <button class="btn-gold" id="go" onclick="buscar()">Buscar outliers</button>
     </div>
   </section>
 
   <div class="status" id="status"></div>
   <section id="results"></section>
+  </div><!-- /view-buscar -->
+
+  <div id="view-historial" class="view" hidden>
+    <h2 class="vtitle">Historial de análisis</h2>
+    <p class="vsub">Cada análisis que generás queda guardado en este navegador.</p>
+    <div id="histList"></div>
+  </div>
+
+  <div id="view-guiones" class="view" hidden>
+    <h2 class="vtitle">Mis guiones</h2>
+    <p class="vsub">Los master prompts que generaste, listos para copiar y pegar en tu IA.</p>
+    <div id="guionList"></div>
+  </div>
+
+  <div id="view-admin" class="view" hidden>
+    <h2 class="vtitle">Panel de administrador</h2>
+    <p class="vsub">Gestioná los correos con acceso. Al terminar, tocá <b>copiar archivo</b> y pegá el contenido en <code>autorizados.json</code> de tu repo; luego hacé commit.</p>
+    <div class="adminbox">
+      <div class="addrow">
+        <input type="email" id="newEmail" placeholder="[email protected]" autocomplete="off"
+               onkeydown="if(event.key==='Enter')adminAdd()">
+        <button class="btn-gold" onclick="adminAdd()">Agregar</button>
+      </div>
+      <div id="emailList" class="emaillist"></div>
+      <div class="jsonout">
+        <div class="jsonhead"><span>autorizados.json</span>
+          <button class="copybtn" onclick="adminCopy(this)">copiar archivo</button></div>
+        <pre id="jsonPre"></pre>
+      </div>
+    </div>
+  </div>
 
   <footer>JM&nbsp;BOTS<b>.outliers</b> · corre en tu navegador · datos vía YouTube API + análisis con IA</footer>
 </div>
@@ -273,13 +409,13 @@
      archivo "autorizados.json" del repositorio.
    ════════════════════════════════════════════════════════════════ */
 const GOOGLE_CLIENT_ID = '894770388392-6ooskd5t6oit8r1hcr86gn6j60s6m982.apps.googleusercontent.com';
-let AUTORIZADOS = [{
-  "permitidos": [
-    "joanatanmonzon13@gmail.com",
-    "jonatanmonzon1126@gmail.com",
-    "diegoasalazarc70@gmail.com"
-  ]
-}];   // se rellena al cargar desde autorizados.json
+/* ── Correos con permisos de ADMINISTRADOR (ven la pestaña "Admin").
+      Poné aquí tu propio correo en minúsculas. Pueden ser varios:
+      const ADMINS = ['[email protected]', '[email protected]'];            ── */
+const ADMINS = [ /* 'jonatanmonson13@gmail.com' */ ];
+let AUTORIZADOS = [];   // se rellena al cargar desde autorizados.json
+let USER_EMAIL = '';    // correo con el que se inició sesión
+let ADMIN_LIST = [];    // lista editable de permitidos (panel de admin)
 /* ════════════════════════════════════════════════════════════════ */
 
 const $ = s => document.querySelector(s);
@@ -306,6 +442,11 @@ function onGoogleLogin(resp){
   if(datos.email_verified && AUTORIZADOS.includes(email)){
     $('#gate').classList.add('hidden');
     $('#logout').style.display = 'block';
+    USER_EMAIL = email;
+    if(ADMINS.map(a => String(a).trim().toLowerCase()).includes(email)){
+      $('#tab-admin').style.display = '';
+      ADMIN_LIST = AUTORIZADOS.slice();
+    }
   }else{
     $('#gmsg').textContent = 'La cuenta ' + (email || '—') + ' no está autorizada.';
     try{ google.accounts.id.disableAutoSelect(); }catch{}
@@ -406,17 +547,25 @@ async function buscar(){
       };
     }).sort((a,b) => b.vsr - a.vsr);
 
-    render(list);
+    // Filtro: priorizar canales chicos con muchas vistas
+    const maxSubs  = Number($('#maxSubs').value)  || 0;   // 0 = sin tope
+    const minViews = Number($('#minViews').value) || 0;   // 0 = sin mínimo
+    let filtrada = list;
+    if(maxSubs  > 0) filtrada = filtrada.filter(v => v.suscriptores > 0 && v.suscriptores <= maxSubs);
+    if(minViews > 0) filtrada = filtrada.filter(v => v.vistas >= minViews);
+
+    render(filtrada, list.length);
   }catch(e){
     $('#status').textContent = 'error: ' + e.message;
   }finally{ btn.disabled = false; }
 }
 
-function render(list){
+function render(list, total){
   RESULTS = list;
   if(!list.length){ $('#status').textContent='';
-    $('#results').innerHTML='<div class="empty">Sin resultados para ese nicho.</div>'; return; }
-  $('#status').textContent = list.length + ' videos · ordenados por anomalía (VSR)';
+    $('#results').innerHTML='<div class="empty">Ningún video pasó el filtro.<br>Probá subir el tope de suscriptores o bajar el mínimo de vistas.</div>'; return; }
+  const extra = (total && total > list.length) ? ' · ' + (total - list.length) + ' descartados por el filtro' : '';
+  $('#status').textContent = list.length + ' videos · ordenados por anomalía (VSR)' + extra;
   const maxReach = Math.max(...list.map(v => Math.log10(v.vistas+1)));
   $('#results').innerHTML = list.map((v,i) => {
     const base = Math.log10(v.suscriptores+1)/maxReach*100;
@@ -425,9 +574,17 @@ function render(list){
     return `<article class="card" style="animation-delay:${i*40}ms">
       <div class="rank">${String(i+1).padStart(2,'0')}</div>
       <div>
-        <h3>${esc(v.titulo)}</h3>
-        <div class="chan">${esc(v.canal)} · ${fmt(v.suscriptores)} subs ·
-          <a href="${v.url}" target="_blank" rel="noopener">ver ↗</a></div>
+        <div class="titlerow">
+          <a class="thumb" href="${v.url}" target="_blank" rel="noopener" title="Abrir en YouTube">
+            <img src="${v.thumbnail}" loading="lazy" alt="" onerror="this.closest('.thumb').style.display='none'">
+            <div class="ov"></div><div class="pl">▶</div>
+          </a>
+          <div class="titletext">
+            <h3>${esc(v.titulo)}</h3>
+            <div class="chan">${esc(v.canal)} · ${fmt(v.suscriptores)} subs ·
+              <a href="${v.url}" target="_blank" rel="noopener">ver ↗</a></div>
+          </div>
+        </div>
       </div>
       <div class="vsr ${high}">${v.vsr}×<small>VSR</small></div>
 
@@ -552,6 +709,19 @@ H) ⚠️ RIESGO — por qué podría no repetirse y qué vigilar.
 Sé práctico: el lector debería poder ejecutar este kit hoy mismo sin saber nada más.
 
 ═══════════════════════════════
+PARTE 2.5 · 🔍 SEO Y PUBLICACIÓN
+═══════════════════════════════
+Devuelve recomendaciones SEO concretas para publicar el nuevo video, encerradas EXACTAMENTE
+entre estas dos marcas, en líneas propias y sin texto extra fuera de la estructura pedida:
+===SEO_INICIO===
+TÍTULO (3 variantes optimizadas, con la palabra clave al principio):
+PALABRAS CLAVE (8-12, una por línea):
+ETIQUETAS / TAGS (separadas por comas, listas para pegar en YouTube):
+DESCRIPCIÓN (3-4 líneas, con la keyword principal en la primera línea):
+HASHTAGS (3-5 relevantes):
+===SEO_FIN===
+
+═══════════════════════════════
 PARTE 3 · 🧠 MASTER PROMPT PORTÁTIL (ESPECIALIZADO EN ESTE FORMATO)
 ═══════════════════════════════
 Primero, en UNA línea, indica si el video PARECE generado o asistido por IA
@@ -604,13 +774,18 @@ sin texto extra dentro:
     const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
     if(!text) throw new Error('respuesta vacía de Gemini');
 
-    // Separar el análisis del master prompt usando las marcas
-    let analisis = text, master = '';
-    const ini = text.indexOf('===MASTERPROMPT_INICIO===');
-    const fin = text.indexOf('===MASTERPROMPT_FIN===');
+    // Separar SEO y master prompt del análisis usando las marcas
+    let work = text, seo = '';
+    const si = work.indexOf('===SEO_INICIO==='), sf = work.indexOf('===SEO_FIN===');
+    if(si !== -1 && sf !== -1 && sf > si){
+      seo = work.slice(si + '===SEO_INICIO==='.length, sf).trim();
+      work = (work.slice(0, si) + work.slice(sf + '===SEO_FIN==='.length)).trim();
+    }
+    let analisis = work, master = '';
+    const ini = work.indexOf('===MASTERPROMPT_INICIO==='), fin = work.indexOf('===MASTERPROMPT_FIN===');
     if(ini !== -1 && fin !== -1 && fin > ini){
-      analisis = text.slice(0, ini).trim();
-      master = text.slice(ini + '===MASTERPROMPT_INICIO==='.length, fin).trim();
+      analisis = work.slice(0, ini).trim();
+      master = work.slice(ini + '===MASTERPROMPT_INICIO==='.length, fin).trim();
     }
 
     const host = btn.closest('.card');
@@ -618,6 +793,14 @@ sin texto extra dentro:
     const box = document.createElement('div');
     box.className = 'analysis'; box.textContent = analisis;
     host.appendChild(box);
+
+    if(seo){
+      const sb = document.createElement('div');
+      sb.className = 'seobox';
+      const sh = document.createElement('div'); sh.className = 'seoh'; sh.textContent = '🔍 SEO Y PUBLICACIÓN';
+      sb.appendChild(sh); sb.appendChild(document.createTextNode(seo));
+      host.appendChild(sb);
+    }
 
     if(master){
       const mb = document.createElement('div');
@@ -637,6 +820,14 @@ sin texto extra dentro:
       host.appendChild(mb);
     }
 
+    // Guardar en el historial (este navegador)
+    addHist({
+      ts: Date.now(),
+      video: {titulo:v.titulo, canal:v.canal, suscriptores:v.suscriptores, vistas:v.vistas,
+              vsr:v.vsr, url:v.url, thumbnail:v.thumbnail, video_id:v.video_id, publicado:v.publicado},
+      analisis, seo, master
+    });
+
     btn.remove();
   }catch(e){
     btn.disabled = false; btn.textContent = 'Analizar con IA';
@@ -645,6 +836,107 @@ sin texto extra dentro:
 }
 
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+/* ═══════════ Navegación por pestañas ═══════════ */
+function mostrarVista(v){
+  document.querySelectorAll('.view').forEach(el => el.hidden = (el.id !== 'view-' + v));
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.view === v));
+  if(v === 'historial') renderHist();
+  if(v === 'guiones')   renderGuiones();
+  if(v === 'admin')     renderAdmin();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ═══════════ Historial + guiones (localStorage) ═══════════ */
+function getHist(){ try{ return JSON.parse(localStorage.getItem('jmbots_hist')) || []; }catch{ return []; } }
+function setHist(arr){ try{ localStorage.setItem('jmbots_hist', JSON.stringify(arr.slice(0,100))); }catch{} }
+function addHist(entry){ const h = getHist(); h.unshift(entry); setHist(h); }
+function delHist(ts){ setHist(getHist().filter(e => e.ts !== ts)); renderHist(); }
+
+function renderHist(){
+  const h = getHist(), cont = $('#histList');
+  cont.innerHTML = h.length ? h.map(e => histCard(e,false)).join('')
+    : '<div class="empty2">Todavía no analizaste ningún video. Andá a “Buscar”, encontrá un outlier y tocá “Analizar con IA”.</div>';
+}
+function renderGuiones(){
+  const h = getHist().filter(e => e.master), cont = $('#guionList');
+  cont.innerHTML = h.length ? h.map(e => histCard(e,true)).join('')
+    : '<div class="empty2">Todavía no generaste ningún guion.</div>';
+}
+function histCard(e, soloGuion){
+  const v = e.video, fecha = new Date(e.ts).toLocaleDateString('es');
+  return `<article class="hcard">
+    <div class="hthumb"><img src="${v.thumbnail}" loading="lazy" alt="" onerror="this.remove()"></div>
+    <div>
+      <h4>${esc(v.titulo)}</h4>
+      <div class="hmeta">${esc(v.canal)} · <b>${v.vsr}× VSR</b> · ${fmt(v.vistas)} vistas · analizado ${fecha}</div>
+    </div>
+    <div class="hact">
+      ${soloGuion
+        ? `<button class="ghost" onclick="copiarGuion(this, ${e.ts})">📋 copiar guion</button>`
+        : `<button class="ghost" onclick="verDetalle(this, ${e.ts})">ver análisis</button>`}
+      <button class="ghost" onclick="delHist(${e.ts})">borrar</button>
+    </div>
+  </article>`;
+}
+function copiarGuion(btn, ts){
+  const e = getHist().find(x => x.ts === ts); if(!e || !e.master) return;
+  navigator.clipboard.writeText(e.master).then(()=>{
+    const t = btn.textContent; btn.textContent = '✓ copiado'; btn.classList.add('on');
+    setTimeout(()=>{ btn.textContent = t; btn.classList.remove('on'); }, 1500);
+  });
+}
+function verDetalle(btn, ts){
+  const e = getHist().find(x => x.ts === ts); if(!e) return;
+  const card = btn.closest('.hcard');
+  const ya = card.querySelector('.hdetail');
+  if(ya){ ya.remove(); btn.textContent = 'ver análisis'; return; }
+  const det = document.createElement('div'); det.className = 'hdetail';
+  const a = document.createElement('div'); a.className = 'analysis'; a.textContent = e.analisis || '(sin texto)';
+  det.appendChild(a);
+  if(e.seo){
+    const s = document.createElement('div'); s.className = 'seobox';
+    const sh = document.createElement('div'); sh.className = 'seoh'; sh.textContent = '🔍 SEO Y PUBLICACIÓN';
+    s.appendChild(sh); s.appendChild(document.createTextNode(e.seo)); det.appendChild(s);
+  }
+  if(e.master){
+    const mb = document.createElement('div'); mb.className = 'masterbox';
+    const head = document.createElement('div'); head.className = 'mhead';
+    const h4 = document.createElement('h4'); h4.textContent = '🧠 MASTER PROMPT';
+    const cb = document.createElement('button'); cb.className = 'copybtn'; cb.textContent = 'copiar';
+    cb.onclick = () => navigator.clipboard.writeText(e.master).then(()=>{ cb.textContent='✓ copiado'; cb.classList.add('ok'); });
+    head.appendChild(h4); head.appendChild(cb);
+    const pre = document.createElement('pre'); pre.textContent = e.master;
+    mb.appendChild(head); mb.appendChild(pre); det.appendChild(mb);
+  }
+  card.appendChild(det); btn.textContent = 'ocultar';
+}
+
+/* ═══════════ Panel de administrador (sin servidor) ═══════════ */
+function renderAdmin(){
+  const cont = $('#emailList');
+  const admins = ADMINS.map(a => String(a).trim().toLowerCase());
+  cont.innerHTML = ADMIN_LIST.length ? ADMIN_LIST.map(e => `
+    <div class="erow">
+      <span>${esc(e)}${admins.includes(e) ? '<span class="adm">ADMIN</span>' : ''}</span>
+      <button onclick="adminDel('${esc(e)}')">quitar</button>
+    </div>`).join('')
+    : '<div class="empty2">La lista está vacía.</div>';
+  $('#jsonPre').textContent = JSON.stringify({permitidos: ADMIN_LIST}, null, 2);
+}
+function adminAdd(){
+  const inp = $('#newEmail'), e = (inp.value || '').trim().toLowerCase();
+  if(!e || !e.includes('@')){ inp.focus(); return; }
+  if(!ADMIN_LIST.includes(e)) ADMIN_LIST.push(e);
+  inp.value = ''; renderAdmin();
+}
+function adminDel(e){ ADMIN_LIST = ADMIN_LIST.filter(x => x !== e); renderAdmin(); }
+function adminCopy(btn){
+  navigator.clipboard.writeText($('#jsonPre').textContent).then(()=>{
+    btn.textContent = '✓ copiado'; btn.classList.add('ok');
+    setTimeout(()=>{ btn.textContent = 'copiar archivo'; btn.classList.remove('ok'); }, 1600);
+  });
+}
 
 /* ───────── Disuasión casual: clic derecho + atajos de devtools ─────────
    Nota: esto solo frena a usuarios casuales, NO es seguridad real.
