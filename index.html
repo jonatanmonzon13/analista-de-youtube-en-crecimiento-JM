@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>JM BOTS.outliers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070A11; --bg2:#0E1422; --bg3:#141C2E;
+    --ink:#F4F7FD; --body:#C4CCDC; --muted:#7C879E; --line:#1E2942;
+    --gold:#E7B85C; --gold2:#F8DA8E; --gold-soft:rgba(231,184,92,.14);
+    --blue:#4D8DFF; --blue2:#7DA9FF; --blue-soft:rgba(77,141,255,.14);
+    --radius:16px;
+    --display:'Sora',sans-serif; --body-f:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;color:var(--body);font-family:var(--body-f);line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 520px at 50% -8%, rgba(77,141,255,.12), transparent 62%),
+      radial-gradient(900px 480px at 88% 8%, rgba(231,184,92,.08), transparent 60%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px}
+  a{color:var(--blue2);text-decoration:none}
+
+  /* Header */
+  header{display:flex;justify-content:space-between;align-items:center;
+         padding:24px 0;border-bottom:1px solid var(--line)}
+  .brand{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.02em;color:var(--ink)}
+  .brand .ol{background:linear-gradient(100deg,var(--gold),var(--gold2));
+             -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+  .brand .dot{color:var(--gold)}
+  .gear{font-family:var(--mono);font-size:12.5px;color:var(--muted);cursor:pointer;
+        border:1px solid var(--line);padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.02)}
+  .gear:hover{border-color:var(--gold);color:var(--gold)}
+
+  /* Panel de claves */
+  .keys{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius);
+        padding:22px;margin:22px 0;display:none;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+  .keys.open{display:block;animation:rise .3s both}
+  .keys h2{font-family:var(--display);font-size:17px;margin:0 0 4px;color:var(--ink);font-weight:700}
+  .keys .hint{color:var(--muted);font-size:13px;margin:0 0 18px}
+  .field{margin-bottom:13px}
+  .field label{display:block;font-family:var(--mono);font-size:10.5px;color:var(--gold);
+               letter-spacing:.12em;margin-bottom:6px;text-transform:uppercase}
+  .field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+               font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--bg3);outline:none}
+  .field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+  .saved{font-family:var(--mono);font-size:12px;color:var(--gold);margin-left:12px}
+
+  /* Botones */
+  button{font-family:var(--display);font-weight:700;font-size:15px;cursor:pointer;border:0;
+         border-radius:11px;padding:13px 24px;transition:transform .08s ease,box-shadow .18s,opacity .15s}
+  .btn-gold{color:#0A0D14;background:linear-gradient(100deg,var(--gold),var(--gold2));
+            box-shadow:0 8px 24px rgba(231,184,92,.25)}
+  .btn-gold:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(231,184,92,.38)}
+  button:disabled{opacity:.45;cursor:wait;transform:none;box-shadow:none}
+
+  /* Hero */
+  .hero{padding:54px 0 36px;position:relative}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+           color:var(--gold);margin-bottom:18px}
+  .hero h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5.4vw,46px);
+           line-height:1.06;letter-spacing:-.035em;margin:0 0 14px;max-width:16ch;color:var(--ink)}
+  .hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--gold),var(--gold2));
+              -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero .sub{color:var(--muted);margin:0 0 30px;max-width:50ch;font-size:15.5px}
+  .spike{position:absolute;top:42px;right:0;width:210px;height:120px;opacity:.9;pointer-events:none}
+  @media (max-width:680px){.spike{display:none}}
+
+  .searchbar{display:flex;gap:10px;flex-wrap:wrap;background:var(--bg2);
+             border:1px solid var(--line);border-radius:var(--radius);padding:11px;
+             box-shadow:0 16px 40px rgba(0,0,0,.35)}
+  .searchbar input[type=text]{flex:1 1 220px;border:0;font-family:var(--body-f);font-size:16px;
+             padding:12px 14px;color:var(--ink);background:transparent;outline:none;min-width:160px}
+  .searchbar input[type=text]::placeholder{color:var(--muted)}
+  .searchbar select{border:1px solid var(--line);border-radius:10px;padding:0 12px;
+             font-family:var(--mono);font-size:13px;color:var(--body);background:var(--bg3);cursor:pointer}
+
+  /* Estado / resultados */
+  .status{font-family:var(--mono);font-size:13px;color:var(--muted);padding:12px 2px 20px}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius);
+        padding:22px;margin-bottom:15px;display:grid;grid-template-columns:38px 1fr auto;gap:4px 18px;
+        box-shadow:0 10px 30px rgba(0,0,0,.28);transition:border-color .2s,transform .2s;
+        animation:rise .45s cubic-bezier(.2,.7,.3,1) both}
+  .card:hover{border-color:rgba(231,184,92,.35);transform:translateY(-2px)}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .rank{font-family:var(--mono);font-weight:700;color:var(--gold);font-size:15px;padding-top:4px}
+  .card h3{font-family:var(--display);font-weight:600;font-size:17.5px;margin:0;line-height:1.28;
+           letter-spacing:-.01em;color:var(--ink)}
+  .chan{color:var(--muted);font-size:13px;margin-top:4px}
+  .chan a{color:var(--blue2)}
+
+  /* Firma: VSR dorado */
+  .vsr{grid-row:1/3;text-align:right;font-family:var(--mono);font-weight:700;font-size:32px;
+       line-height:1;white-space:nowrap;color:var(--body)}
+  .vsr small{display:block;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.16em;margin-top:7px}
+  .vsr.high{background:linear-gradient(100deg,var(--gold),var(--gold2));
+            -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+            filter:drop-shadow(0 0 14px rgba(231,184,92,.35))}
+
+  /* Zona central: datos + reproductor lado a lado */
+  .mid{grid-column:2/4;margin-top:8px;display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .datacol{flex:1 1 340px;min-width:0}
+  .playercol{flex:0 0 300px;max-width:100%}
+  .playercol:empty{display:none}
+  .playercol iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:12px;
+        box-shadow:0 10px 30px rgba(0,0,0,.45);background:#000}
+
+  /* Barras de datos (azul) */
+  .bars{margin:0 0 4px;display:grid;gap:7px;max-width:460px}
+  .bar{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:10px;
+       font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .track{height:9px;background:var(--bg3);border-radius:6px;overflow:hidden}
+  .fill{height:100%;border-radius:6px}
+  .fill.base{background:#39435C}
+  .fill.reach{background:linear-gradient(90deg,var(--blue),var(--blue2));
+              box-shadow:0 0 14px rgba(77,141,255,.5)}
+  .num{color:var(--body)}
+
+  .meta{font-family:var(--mono);font-size:12px;color:var(--muted);
+        display:flex;gap:20px;flex-wrap:wrap;margin-top:14px}
+  .actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+  .ghost{background:transparent;color:var(--gold);border:1px solid rgba(231,184,92,.4);padding:9px 18px;font-size:14px}
+  .ghost:hover{border-color:var(--gold);background:var(--gold-soft);transform:none}
+  .ghost.on{border-color:var(--gold);background:var(--gold-soft)}
+
+  .analysis{grid-column:1/4;margin-top:18px;padding:20px;background:var(--bg);
+            border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;
+            white-space:pre-wrap;font-size:14.5px;line-height:1.65;color:var(--body)}
+  .empty{text-align:center;color:var(--muted);padding:54px 0;font-family:var(--mono);font-size:14px}
+
+  /* Master prompt: recuadro azul con botón copiar */
+  .masterbox{grid-column:1/4;margin-top:14px;background:var(--bg);
+             border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:12px;overflow:hidden}
+  .masterbox .mhead{display:flex;justify-content:space-between;align-items:center;gap:12px;
+             padding:13px 18px;background:var(--blue-soft);border-bottom:1px solid var(--line)}
+  .masterbox .mhead h4{margin:0;font-family:var(--display);font-size:14px;font-weight:700;color:var(--blue2);
+             letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+  .copybtn{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--blue2);cursor:pointer;
+           border:1px solid rgba(77,141,255,.4);background:transparent;border-radius:8px;padding:7px 14px}
+  .copybtn:hover{border-color:var(--blue);background:rgba(77,141,255,.12);transform:none}
+  .copybtn.ok{color:var(--gold);border-color:var(--gold)}
+  .masterbox pre{margin:0;padding:18px;white-space:pre-wrap;word-break:break-word;
+           font-family:var(--mono);font-size:13px;line-height:1.6;color:var(--body)}
+
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:26px 0;
+         font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center}
+  footer b{color:var(--gold)}
+
+  @media (max-width:560px){
+    .card{grid-template-columns:30px 1fr;gap:4px 14px}
+    .vsr{grid-row:auto;grid-column:1/3;text-align:left;margin-top:8px}
+    .mid,.analysis,.masterbox{grid-column:1/3}
+    .playercol{flex:1 1 100%}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* Pantalla de acceso (login con Google) */
+  .gate{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:22px;
+        background:
+          radial-gradient(1100px 520px at 50% -8%, rgba(77,141,255,.12), transparent 62%),
+          radial-gradient(900px 480px at 88% 8%, rgba(231,184,92,.08), transparent 60%),
+          var(--bg)}
+  .gate.hidden{display:none}
+  .gatebox{max-width:380px;width:100%;text-align:center;background:var(--bg2);
+           border:1px solid var(--line);border-radius:var(--radius);padding:34px 28px;
+           box-shadow:0 30px 70px rgba(0,0,0,.55)}
+  .gatebox .brand{font-size:22px;margin-bottom:4px}
+  .gatebox h2{font-family:var(--display);color:var(--ink);margin:16px 0 8px;font-size:22px;font-weight:700}
+  .gatebox p{color:var(--muted);font-size:14px;margin:0 0 22px}
+  #gbtn{display:flex;justify-content:center;min-height:44px}
+  .gmsg{color:var(--gold);font-family:var(--mono);font-size:12.5px;margin:18px 0 0!important;min-height:18px}
+  #logout{display:none}
+</style>
+</head>
+<body>
+<script src="https://accounts.google.com/gsi/client" async></script>
+
+<!-- Pantalla de acceso: cubre todo hasta que entres con un Google autorizado -->
+<div class="gate" id="gate">
+  <div class="gatebox">
+    <div class="brand">JM&nbsp;BOTS<span class="dot">.</span><span class="ol">outliers</span></div>
+    <h2>Acceso privado</h2>
+    <p>Inicia sesión con tu cuenta de Google autorizada para entrar.</p>
+    <div id="gbtn"></div>
+    <p class="gmsg" id="gmsg"></p>
+  </div>
+</div>
+
+<header class="wrap">
+  <div class="brand">JM&nbsp;BOTS<span class="dot">.</span><span class="ol">outliers</span></div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div class="gear" onclick="toggleKeys()">⚙ claves</div>
+    <div class="gear" id="logout" onclick="salir()">salir</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="keys" id="keys">
+    <h2>Tus claves de API</h2>
+    <p class="hint">Se guardan solo en este navegador, nunca salen a ningún servidor externo.
+       <a href="https://console.cloud.google.com" target="_blank" rel="noopener">Clave de YouTube ↗</a> ·
+       <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Clave de Gemini (gratis) ↗</a></p>
+    <div class="field">
+      <label>YouTube Data API v3</label>
+      <input type="password" id="ytKey" placeholder="AIza…" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Google Gemini API</label>
+      <input type="password" id="anKey" placeholder="AIza…" autocomplete="off">
+    </div>
+    <button class="btn-gold" onclick="guardarClaves()">Guardar claves</button>
+    <span class="saved" id="savedMsg"></span>
+  </section>
+
+  <section class="hero">
+    <svg class="spike" viewBox="0 0 210 120" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#F8DA8E"/><stop offset="1" stop-color="#E7B85C"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <line x1="0" y1="100" x2="210" y2="100" stroke="#1E2942" stroke-width="1"/>
+      <polyline points="0,92 22,95 44,90 66,96 88,88 110,20 132,93 154,90 176,95 198,91 210,93"
+        stroke="url(#g)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"
+        filter="url(#glow)" class="line"/>
+      <circle cx="110" cy="20" r="4.5" fill="#F8DA8E" filter="url(#glow)"/>
+    </svg>
+    <div class="eyebrow">detección de anomalías · youtube</div>
+    <h1>Encuentra el video que <em>rompió</em> su propio canal.</h1>
+    <p class="sub">Busca un nicho y detecta los outliers: videos con muchas más vistas que
+       suscriptores tiene su canal. Luego pregúntale a la IA por qué funcionó.</p>
+    <div class="searchbar">
+      <input type="text" id="q" placeholder="nicho o tema — ej: recetas keto"
+             onkeydown="if(event.key==='Enter')buscar()">
+      <select id="dias">
+        <option value="30">30 días</option>
+        <option value="90" selected>90 días</option>
+        <option value="365">1 año</option>
+        <option value="0">sin límite</option>
+      </select>
+      <select id="region">
+        <option value="ES" selected>ES</option>
+        <option value="US">US</option>
+        <option value="MX">MX</option>
+        <option value="AR">AR</option>
+      </select>
+      <button class="btn-gold" id="go" onclick="buscar()">Buscar outliers</button>
+    </div>
+  </section>
+
+  <div class="status" id="status"></div>
+  <section id="results"></section>
+
+  <footer>JM&nbsp;BOTS<b>.outliers</b> · corre en tu navegador · datos vía YouTube API + análisis con IA</footer>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   ⚙ CONFIGURACIÓN DE ACCESO
+   - Pega aquí tu Client ID de Google.
+   - La lista de correos permitidos NO va aquí: se edita en el
+     archivo "autorizados.json" del repositorio.
+   ════════════════════════════════════════════════════════════════ */
+const GOOGLE_CLIENT_ID = 'PEGA_AQUI_TU_CLIENT_ID.apps.googleusercontent.com';
+let AUTORIZADOS = [];   // se rellena al cargar desde autorizados.json
+/* ════════════════════════════════════════════════════════════════ */
+
+const $ = s => document.querySelector(s);
+const fmt = n => Intl.NumberFormat('es').format(n);
+const YT = 'https://www.googleapis.com/youtube/v3/';
+let RESULTS = [];
+
+let KEYS = {yt:'', an:''};
+try{ KEYS = JSON.parse(localStorage.getItem('jmbots_keys')) || KEYS; }catch{}
+
+/* ───────── Login con Google + lista de autorizados ───────── */
+function parseJwt(token){
+  try{
+    const b = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+    const json = decodeURIComponent(atob(b).split('').map(
+      c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    return JSON.parse(json);
+  }catch{ return {}; }
+}
+
+function onGoogleLogin(resp){
+  const datos = parseJwt(resp.credential);
+  const email = (datos.email || '').toLowerCase();
+  if(datos.email_verified && AUTORIZADOS.includes(email)){
+    $('#gate').classList.add('hidden');
+    $('#logout').style.display = 'block';
+  }else{
+    $('#gmsg').textContent = 'La cuenta ' + (email || '—') + ' no está autorizada.';
+    try{ google.accounts.id.disableAutoSelect(); }catch{}
+  }
+}
+
+function salir(){
+  try{ google.accounts.id.disableAutoSelect(); }catch{}
+  location.reload();
+}
+
+function initGate(){
+  cargarAutorizados().then(esperarGoogle);
+}
+
+async function cargarAutorizados(){
+  try{
+    // ?t=… evita que el navegador use una versión vieja en caché tras editar la lista
+    const r = await fetch('autorizados.json?t=' + Date.now());
+    const data = await r.json();
+    AUTORIZADOS = (data.permitidos || []).map(e => String(e).trim().toLowerCase());
+  }catch(e){
+    AUTORIZADOS = [];   // si falla la carga, por seguridad no entra nadie
+    console.warn('No se pudo cargar autorizados.json:', e);
+  }
+}
+
+function esperarGoogle(){
+  if(typeof google === 'undefined' || !google.accounts){ setTimeout(esperarGoogle, 250); return; }
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: onGoogleLogin,
+    auto_select: true,
+  });
+  google.accounts.id.renderButton($('#gbtn'),
+    { theme:'filled_black', size:'large', shape:'pill', text:'signin_with', locale:'es' });
+  google.accounts.id.prompt();   // intento de inicio automático para quien ya entró antes
+}
+window.addEventListener('DOMContentLoaded', initGate);
+
+function toggleKeys(){ $('#keys').classList.toggle('open'); }
+function guardarClaves(){
+  KEYS.yt = $('#ytKey').value.trim();
+  KEYS.an = $('#anKey').value.trim();
+  try{ localStorage.setItem('jmbots_keys', JSON.stringify(KEYS)); }catch{}
+  $('#savedMsg').textContent = '✓ guardadas';
+  setTimeout(()=>{ $('#keys').classList.remove('open'); $('#savedMsg').textContent=''; }, 900);
+}
+window.addEventListener('DOMContentLoaded', ()=>{
+  $('#ytKey').value = KEYS.yt; $('#anKey').value = KEYS.an;
+  if(!KEYS.yt || !KEYS.an) $('#keys').classList.add('open');
+});
+
+async function ytGet(path, params){
+  const url = new URL(YT + path);
+  url.searchParams.set('key', KEYS.yt);
+  for(const [k,v] of Object.entries(params)){
+    if(v !== undefined && v !== null && v !== '') url.searchParams.set(k, v);
+  }
+  const r = await fetch(url);
+  const data = await r.json();
+  if(!r.ok) throw new Error(data.error?.message || ('YouTube ' + r.status));
+  return data;
+}
+
+async function buscar(){
+  const query = $('#q').value.trim();
+  if(!query) return;
+  if(!KEYS.yt || !KEYS.an){ $('#keys').classList.add('open');
+    $('#status').textContent = 'pega primero tus dos claves ↑'; return; }
+
+  const btn = $('#go'); btn.disabled = true;
+  $('#results').innerHTML = ''; $('#status').textContent = 'analizando YouTube…';
+  try{
+    const dias = Number($('#dias').value);
+    const params = {part:'snippet', q:query, type:'video', maxResults:50,
+                    order:'viewCount', regionCode:$('#region').value};
+    if(dias > 0) params.publishedAfter = new Date(Date.now() - dias*86400000).toISOString();
+
+    const search = await ytGet('search', params);
+    const ids = search.items.map(it => it.id.videoId).filter(Boolean);
+    if(!ids.length){ $('#status').textContent=''; render([]); return; }
+
+    const det = await ytGet('videos', {part:'snippet,statistics', id:ids.join(',')});
+    const chIds = [...new Set(det.items.map(v => v.snippet.channelId))];
+    const ch = await ytGet('channels', {part:'statistics', id:chIds.join(',')});
+    const subs = {}; ch.items.forEach(c => subs[c.id] = +(c.statistics.subscriberCount||0));
+
+    const list = det.items.map(v => {
+      const vistas = +(v.statistics.viewCount||0);
+      const s = subs[v.snippet.channelId] || 0;
+      return {
+        video_id:v.id, titulo:v.snippet.title, canal:v.snippet.channelTitle,
+        vistas, suscriptores:s, vsr: s>0 ? +(vistas/s).toFixed(1) : 0,
+        likes:+(v.statistics.likeCount||0), comentarios:+(v.statistics.commentCount||0),
+        publicado:v.snippet.publishedAt.slice(0,10),
+        url:'https://youtube.com/watch?v='+v.id, thumbnail:v.snippet.thumbnails.high.url,
+      };
+    }).sort((a,b) => b.vsr - a.vsr);
+
+    render(list);
+  }catch(e){
+    $('#status').textContent = 'error: ' + e.message;
+  }finally{ btn.disabled = false; }
+}
+
+function render(list){
+  RESULTS = list;
+  if(!list.length){ $('#status').textContent='';
+    $('#results').innerHTML='<div class="empty">Sin resultados para ese nicho.</div>'; return; }
+  $('#status').textContent = list.length + ' videos · ordenados por anomalía (VSR)';
+  const maxReach = Math.max(...list.map(v => Math.log10(v.vistas+1)));
+  $('#results').innerHTML = list.map((v,i) => {
+    const base = Math.log10(v.suscriptores+1)/maxReach*100;
+    const reach = Math.log10(v.vistas+1)/maxReach*100;
+    const high = v.vsr >= 10 ? 'high' : '';
+    return `<article class="card" style="animation-delay:${i*40}ms">
+      <div class="rank">${String(i+1).padStart(2,'0')}</div>
+      <div>
+        <h3>${esc(v.titulo)}</h3>
+        <div class="chan">${esc(v.canal)} · ${fmt(v.suscriptores)} subs ·
+          <a href="${v.url}" target="_blank" rel="noopener">ver ↗</a></div>
+      </div>
+      <div class="vsr ${high}">${v.vsr}×<small>VSR</small></div>
+
+      <div class="mid">
+        <div class="datacol">
+          <div class="bars">
+            <div class="bar"><span>audiencia</span>
+              <div class="track"><div class="fill base" style="width:${base}%"></div></div>
+              <span class="num">${fmt(v.suscriptores)}</span></div>
+            <div class="bar"><span>alcance</span>
+              <div class="track"><div class="fill reach" style="width:${reach}%"></div></div>
+              <span class="num">${fmt(v.vistas)}</span></div>
+          </div>
+          <div class="meta"><span>♥ ${fmt(v.likes)}</span><span>💬 ${fmt(v.comentarios)}</span>
+            <span>${v.publicado}</span></div>
+          <div class="actions">
+            <button class="ghost" onclick="reproducir(this, ${i})">▶ Reproducir aquí</button>
+            <button class="ghost" onclick="analizar(this, ${i})">Analizar con IA</button>
+          </div>
+        </div>
+        <div class="playercol" id="player-${i}"></div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function reproducir(btn, idx){
+  const v = RESULTS[idx];
+  const col = document.getElementById('player-' + idx);
+  if(col.firstChild){           // ya hay reproductor → cerrar
+    col.innerHTML = '';
+    btn.textContent = '▶ Reproducir aquí';
+    btn.classList.remove('on');
+    return;
+  }
+  const fr = document.createElement('iframe');
+  // dominio nocookie + sin autoplay (aparece listo, solo dar al play) + referrerpolicy = evita el Error 153
+  fr.src = 'https://www.youtube-nocookie.com/embed/' + v.video_id + '?rel=0&playsinline=1';
+  fr.title = v.titulo;
+  fr.loading = 'lazy';
+  fr.referrerPolicy = 'strict-origin-when-cross-origin';
+  fr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+  fr.setAttribute('allowfullscreen', '');
+  col.appendChild(fr);
+  btn.textContent = '✕ Cerrar video';
+  btn.classList.add('on');
+}
+
+async function thumbBase64(url){
+  const r = await fetch(url);
+  const blob = await r.blob();
+  return await new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onloadend = () => res(fr.result.split(',')[1]);
+    fr.onerror = rej; fr.readAsDataURL(blob);
+  });
+}
+
+async function analizar(btn, idx){
+  const v = RESULTS[idx];
+  btn.disabled = true; btn.textContent = 'pensando…';
+
+  const prompt = `Eres dos cosas a la vez: (A) analista experto en crecimiento de YouTube y
+(B) director de producción de video con IA generativa (Veo 3, Grok / otros modelos de texto-a-video).
+Tu trabajo es analizar por qué este video rompió su canal y luego entregar un KIT DE PRODUCCIÓN
+COMPLETO para recrear un video equivalente usando IA, listo para copiar y pegar prompts.
+
+DATOS
+- Título: ${v.titulo}
+- Canal: ${v.canal} (${fmt(v.suscriptores)} suscriptores)
+- Vistas: ${fmt(v.vistas)}  |  VSR: ${v.vsr}x
+- Likes: ${fmt(v.likes)}  |  Comentarios: ${fmt(v.comentarios)}
+- Publicado: ${v.publicado}
+
+Un VSR de ${v.vsr}x significa que consiguió ${v.vsr} veces más vistas que
+suscriptores tiene el canal: rompió su audiencia habitual.
+
+Responde TODO en español. Usa estas dos partes:
+
+═══════════════════════════════
+PARTE 1 · ANÁLISIS (breve)
+═══════════════════════════════
+1. GANCHO DEL TÍTULO — técnica psicológica (curiosidad, controversia, número, beneficio…)
+2. LA MINIATURA — qué hace bien visualmente (si la ves)
+3. POR QUÉ SE PROPAGÓ — hipótesis (tema, timing, emoción, búsqueda vs. sugeridos)
+4. PATRÓN REPLICABLE — la fórmula en una sola frase
+
+═══════════════════════════════
+PARTE 2 · 🎬 KIT DE PRODUCCIÓN CON IA (Veo 3 / Grok)
+═══════════════════════════════
+Entrega todo lo necesario para que un creador genere un video equivalente con IA de texto-a-video.
+Sé MUY concreto y escribe los prompts en bloques listos para copiar/pegar. Incluye:
+
+A) CONCEPTO ADAPTADO — el mismo gancho aplicado a una idea nueva (no copia literal), en 2-3 líneas.
+
+B) GUION COMPLETO — guion locutado escena por escena. Para cada escena indica:
+   · Nº de escena y duración aproximada en segundos
+   · VOZ EN OFF / DIÁLOGO (el texto exacto que se narra)
+   · Acción visual que ocurre
+
+C) PROMPTS DE PERSONAJES — para cada personaje recurrente, un prompt detallado y REUTILIZABLE
+   que mantenga consistencia (físico, edad, ropa, expresión, estilo de render, iluminación).
+   Escríbelos en inglés dentro de un bloque, porque los modelos rinden mejor así, y añade una
+   traducción breve en español de qué describe.
+
+D) PROMPTS DE ESCENAS — un prompt de generación por cada escena del guion. Cada uno debe incluir:
+   sujeto + acción + entorno/ambiente + estilo visual + cámara (plano, lente, ángulo) +
+   iluminación + paleta de color + estado de ánimo. En inglés, en bloques separados y numerados
+   para pegar uno por uno en Veo 3 o Grok.
+
+E) PROMPTS DE ANIMACIÓN / MOVIMIENTO — para cada escena, indica el movimiento de cámara y la
+   animación deseada (ej: slow dolly in, handheld, parallax, lip-sync, motion del sujeto), en el
+   formato que entienden estos modelos.
+
+F) AUDIO Y MÚSICA — tipo de música, ritmo, efectos de sonido y si la voz será TTS o grabada.
+
+G) MONTAJE Y EXPORT — orden de clips, cortes, texto en pantalla, duración final objetivo y formato
+   (16:9 horizontal o 9:16 vertical según el original).
+
+H) ⚠️ RIESGO — por qué podría no repetirse y qué vigilar.
+
+Sé práctico: el lector debería poder ejecutar este kit hoy mismo sin saber nada más.
+
+═══════════════════════════════
+PARTE 3 · 🧠 MASTER PROMPT PORTÁTIL (ESPECIALIZADO EN ESTE FORMATO)
+═══════════════════════════════
+Primero, en UNA línea, indica si el video PARECE generado o asistido por IA
+(escribe "Detección IA: probable / parcial / improbable" y por qué en media línea).
+
+Después, en UNA línea, NOMBRA EL FORMATO/GÉNERO exacto de este video
+(ej: "reflexiones animadas", "frutinovelas", "historias bíblicas 3D",
+"top 5 misterios", "storytime animado", "cuentos de terror"…).
+Escribe: "Formato detectado: ___".
+
+Luego entrega un ÚNICO master prompt autocontenido y ESPECIALIZADO EN ESE MISMO FORMATO:
+un texto que el usuario pueda copiar y pegar TAL CUAL en otro modelo (Gemini o ChatGPT)
+para que ESE modelo le genere, de cero, todo lo necesario para producir OTRO video DEL
+MISMO FORMATO que el analizado. Si esto es de reflexiones animadas, el master prompt debe
+servir para fabricar reflexiones animadas; si es frutinovela, para fabricar frutinovelas;
+y así con el formato que sea. El master prompt debe:
+- Empezar diciéndole a la otra IA QUÉ FORMATO va a producir, y describir las reglas, el tono,
+  la duración típica, la estética y la estructura propias de ESE formato, deducidas del video.
+- Estar escrito como instrucción directa a otra IA (rol + contexto + tarea + formato de salida).
+- Incluir la fórmula ganadora detectada (gancho, ritmo, tipo de personajes, estilo visual)
+  ya integrada y FIJA para ese formato — nada genérico.
+- Dejar UN ÚNICO hueco editable [TU IDEA / TEMA DENTRO DE ESTE FORMATO] para que el usuario
+  solo cambie el tema puntual, manteniendo el formato intacto.
+- Pedirle a esa IA que devuelva: guion, prompts de personajes, prompts de escenas, prompts de
+  animación y plan de montaje (igual que la Parte 2), listos para Veo 3 / Grok y coherentes
+  con ese formato.
+- Ser largo y completo, pero copiable de un solo bloque.
+
+MUY IMPORTANTE: encierra ese master prompt EXACTAMENTE entre estas dos marcas, en líneas propias,
+sin texto extra dentro:
+===MASTERPROMPT_INICIO===
+(aquí el master prompt completo)
+===MASTERPROMPT_FIN===`;
+
+  const parts = [];
+  try{
+    const b64 = await thumbBase64(v.thumbnail);
+    parts.push({inline_data:{mime_type:'image/jpeg', data:b64}});
+  }catch{}
+  parts.push({text:prompt});
+
+  try{
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(KEYS.an), {
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({ contents:[{parts}], generationConfig:{maxOutputTokens:16384} }),
+    });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error?.message || ('Gemini ' + r.status));
+    const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
+    if(!text) throw new Error('respuesta vacía de Gemini');
+
+    // Separar el análisis del master prompt usando las marcas
+    let analisis = text, master = '';
+    const ini = text.indexOf('===MASTERPROMPT_INICIO===');
+    const fin = text.indexOf('===MASTERPROMPT_FIN===');
+    if(ini !== -1 && fin !== -1 && fin > ini){
+      analisis = text.slice(0, ini).trim();
+      master = text.slice(ini + '===MASTERPROMPT_INICIO==='.length, fin).trim();
+    }
+
+    const host = btn.closest('.card');
+
+    const box = document.createElement('div');
+    box.className = 'analysis'; box.textContent = analisis;
+    host.appendChild(box);
+
+    if(master){
+      const mb = document.createElement('div');
+      mb.className = 'masterbox';
+      const head = document.createElement('div'); head.className = 'mhead';
+      const h4 = document.createElement('h4'); h4.textContent = '🧠 MASTER PROMPT — pégalo en Gemini o GPT';
+      const cb = document.createElement('button'); cb.className = 'copybtn'; cb.textContent = 'copiar';
+      cb.onclick = () => {
+        navigator.clipboard.writeText(master).then(()=>{
+          cb.textContent = '✓ copiado'; cb.classList.add('ok');
+          setTimeout(()=>{ cb.textContent='copiar'; cb.classList.remove('ok'); }, 1600);
+        }).catch(()=>{ cb.textContent='no se pudo'; });
+      };
+      head.appendChild(h4); head.appendChild(cb);
+      const pre = document.createElement('pre'); pre.textContent = master;
+      mb.appendChild(head); mb.appendChild(pre);
+      host.appendChild(mb);
+    }
+
+    btn.remove();
+  }catch(e){
+    btn.disabled = false; btn.textContent = 'Analizar con IA';
+    alert('Error en el análisis: ' + e.message);
+  }
+}
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+/* ───────── Disuasión casual: clic derecho + atajos de devtools ─────────
+   Nota: esto solo frena a usuarios casuales, NO es seguridad real.
+   Se permite copiar (Ctrl+C / Cmd+C) y la selección de texto.            */
+(function(){
+  // Bloquear menú contextual (clic derecho → "propiedades", "ver código", etc.)
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  document.addEventListener('keydown', e => {
+    const k = (e.key || '').toLowerCase();
+
+    // Permitir explícitamente copiar / seleccionar todo / cortar / pegar
+    if((e.ctrlKey || e.metaKey) && ['c','a','x','v'].includes(k)) return;
+
+    // F12 → abrir devtools
+    if(k === 'f12'){ e.preventDefault(); return; }
+
+    // Ctrl/Cmd+Shift+I / J / C  → devtools / consola / inspector
+    if((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','j','c'].includes(k)){
+      e.preventDefault(); return;
+    }
+
+    // Ctrl/Cmd+U → ver código fuente
+    if((e.ctrlKey || e.metaKey) && k === 'u'){ e.preventDefault(); return; }
+
+    // Ctrl/Cmd+S → guardar página
+    if((e.ctrlKey || e.metaKey) && k === 's'){ e.preventDefault(); return; }
+  });
+})();
+</script>
+</body>
+</html>
