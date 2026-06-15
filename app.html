@@ -260,6 +260,61 @@
     .hdetail{grid-column:1}
   }
 
+  /* ═══ Chips de nichos sugeridos ═══ */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{font-family:var(--mono);font-size:12px;color:var(--body);cursor:pointer;
+        border:1px solid var(--line);background:var(--bg2);border-radius:999px;padding:7px 14px;
+        transition:border-color .15s,color .15s,background .15s}
+  .chip:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-soft)}
+  .chip.ref{color:var(--blue2);border-color:rgba(77,141,255,.4)}
+  .chip.ref:hover{border-color:var(--blue);background:var(--blue-soft);color:var(--blue2)}
+
+  /* ═══ Feed de outliers recientes ═══ */
+  .feed{margin:6px 0 4px}
+  .feedhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .feedhead h3{font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);margin:0;letter-spacing:.01em}
+  .feednicho{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0}
+  .feedref{padding:7px 14px;font-size:12.5px}
+  .feedrow{display:grid;grid-auto-flow:column;grid-auto-columns:200px;gap:12px;overflow-x:auto;
+           padding-bottom:10px;scroll-snap-type:x mandatory}
+  .feedrow::-webkit-scrollbar{height:7px}
+  .feedrow::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+  .fcard{scroll-snap-align:start;background:var(--bg2);border:1px solid var(--line);border-radius:13px;
+         overflow:hidden;text-decoration:none;display:block;transition:border-color .2s,transform .2s}
+  .fcard:hover{border-color:rgba(231,184,92,.4);transform:translateY(-2px)}
+  .fthumb{position:relative;aspect-ratio:16/9;background:var(--bg3)}
+  .fthumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .fbadge{position:absolute;top:8px;left:8px;font-family:var(--mono);font-weight:700;font-size:12px;
+          color:#0A0D14;background:linear-gradient(100deg,var(--gold),var(--gold2));
+          border-radius:7px;padding:3px 8px;box-shadow:0 4px 12px rgba(231,184,92,.35)}
+  .fbody{padding:11px 12px}
+  .fbody h4{font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);margin:0 0 6px;
+            line-height:1.32;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .fbody .fm{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+  .feedrow .skel{height:188px;border-radius:13px;border:1px solid var(--line);
+          background:linear-gradient(100deg,var(--bg2),var(--bg3),var(--bg2));
+          background-size:200% 100%;animation:shine 1.2s infinite}
+  @keyframes shine{from{background-position:200% 0}to{background-position:-200% 0}}
+
+  /* ═══ Puntuaciones del análisis ═══ */
+  .scores{grid-column:1/4;margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}
+  .score{flex:1 1 110px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px 12px;text-align:center}
+  .score .sv{font-family:var(--mono);font-weight:700;font-size:25px;line-height:1;
+             background:linear-gradient(100deg,var(--gold),var(--gold2));-webkit-background-clip:text;
+             background-clip:text;-webkit-text-fill-color:transparent}
+  .score .sl{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+  .score.rep .sv{background:linear-gradient(100deg,var(--blue),var(--blue2));-webkit-background-clip:text;
+             background-clip:text;-webkit-text-fill-color:transparent}
+  .hdetail .scores{grid-column:auto}
+  @media (max-width:560px){ .scores{grid-column:1/3} .score{flex:1 1 30%} }
+
+  /* ═══ Botón descargar .MD ═══ */
+  .mdbtn{grid-column:1/4;justify-self:start;margin-top:12px;
+         font-family:var(--mono);font-size:12px;font-weight:700;color:#3ddc84;cursor:pointer;
+         border:1px solid rgba(61,220,132,.4);background:transparent;border-radius:8px;padding:8px 16px}
+  .mdbtn:hover{border-color:#3ddc84;background:rgba(61,220,132,.12);transform:none}
+  .hdetail .mdbtn{grid-column:auto}
+
 </style>
 </head>
 <body>
@@ -279,8 +334,9 @@
 <header class="wrap">
   <div class="brand">JM&nbsp;BOTS<span class="dot">.</span><span class="ol">outliers</span></div>
   <div style="display:flex;gap:8px;align-items:center">
-    <a class="gear" href="./index.html" style="text-decoration:none">← inicio</a>
-    <div class="gear" onclick="toggleKeys()">⚙ claves</div>
+    <a class="gear" id="homeBtn" href="./index.html" style="text-decoration:none">← inicio</a>
+    <div class="gear" id="langBtn" onclick="toggleIdioma()">EN</div>
+    <div class="gear" id="keysBtn" onclick="toggleKeys()">⚙ claves</div>
     <div class="gear" id="logout" onclick="salir()">salir</div>
   </div>
 </header>
@@ -339,11 +395,40 @@
         <option value="365">1 año</option>
         <option value="0">sin límite</option>
       </select>
-      <select id="region">
-        <option value="ES" selected>ES</option>
-        <option value="US">US</option>
-        <option value="MX">MX</option>
-        <option value="AR">AR</option>
+      <select id="region" title="País / región de YouTube">
+        <optgroup label="🌎 LATAM + España">
+          <option value="ES" selected>España</option>
+          <option value="AR">Argentina</option>
+          <option value="MX">México</option>
+          <option value="CO">Colombia</option>
+          <option value="CL">Chile</option>
+          <option value="PE">Perú</option>
+          <option value="VE">Venezuela</option>
+          <option value="EC">Ecuador</option>
+          <option value="GT">Guatemala</option>
+          <option value="CU">Cuba</option>
+          <option value="BO">Bolivia</option>
+          <option value="DO">Rep. Dominicana</option>
+          <option value="HN">Honduras</option>
+          <option value="PY">Paraguay</option>
+          <option value="SV">El Salvador</option>
+          <option value="NI">Nicaragua</option>
+          <option value="CR">Costa Rica</option>
+          <option value="PA">Panamá</option>
+          <option value="UY">Uruguay</option>
+          <option value="PR">Puerto Rico</option>
+        </optgroup>
+        <optgroup label="🌐 Otros mercados">
+          <option value="US">Estados Unidos</option>
+          <option value="BR">Brasil</option>
+          <option value="GB">Reino Unido</option>
+          <option value="FR">Francia</option>
+          <option value="DE">Alemania</option>
+          <option value="IT">Italia</option>
+          <option value="PT">Portugal</option>
+          <option value="CA">Canadá</option>
+          <option value="IN">India</option>
+        </optgroup>
       </select>
       <select id="maxSubs" title="Excluir canales con más suscriptores que esto">
         <option value="0">sin tope de subs</option>
@@ -362,6 +447,15 @@
       </select>
       <button class="btn-gold" id="go" onclick="buscar()">Buscar outliers</button>
     </div>
+    <div class="chips" id="chips" aria-label="nichos sugeridos"></div>
+  </section>
+
+  <section class="feed" id="feedWrap" hidden>
+    <div class="feedhead">
+      <h3>✦ <span id="feedTitle">Últimos outliers detectados</span> <span class="feednicho" id="feedNicho"></span></h3>
+      <button class="ghost feedref" id="feedRef" onclick="refrescarFeed()">↻ <span id="feedRefTxt">otro nicho</span></button>
+    </div>
+    <div class="feedrow" id="feedRow"></div>
   </section>
 
   <div class="status" id="status"></div>
@@ -494,6 +588,8 @@ function guardarClaves(){
   try{ localStorage.setItem('jmbots_keys', JSON.stringify(KEYS)); }catch{}
   $('#savedMsg').textContent = '✓ guardadas';
   setTimeout(()=>{ $('#keys').classList.remove('open'); $('#savedMsg').textContent=''; }, 900);
+  // si ya entraste y recién cargás la clave de YouTube, prendé el feed
+  if(KEYS.yt && $('#gate').classList.contains('hidden')) cargarFeed();
 }
 window.addEventListener('DOMContentLoaded', ()=>{
   $('#ytKey').value = KEYS.yt; $('#anKey').value = KEYS.an;
@@ -512,22 +608,43 @@ async function ytGet(path, params){
   return data;
 }
 
+// rota el orden de búsqueda en cada llamada para diversificar resultados
+const ORDERS = ['relevance','viewCount','date'];
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
 async function buscar(){
   const query = $('#q').value.trim();
   if(!query) return;
   if(!KEYS.yt || !KEYS.an){ $('#keys').classList.add('open');
-    $('#status').textContent = 'pega primero tus dos claves ↑'; return; }
+    $('#status').textContent = t('pegaClaves'); return; }
 
   const btn = $('#go'); btn.disabled = true;
-  $('#results').innerHTML = ''; $('#status').textContent = 'analizando YouTube…';
+  $('#results').innerHTML = ''; $('#status').textContent = t('analizando');
   try{
     const dias = Number($('#dias').value);
-    const params = {part:'snippet', q:query, type:'video', maxResults:50,
-                    order:'viewCount', regionCode:$('#region').value};
-    if(dias > 0) params.publishedAfter = new Date(Date.now() - dias*86400000).toISOString();
+    const order = ORDERS[Math.random()*ORDERS.length|0];   // ← orden rotativo
+    const base = {part:'snippet', q:query, type:'video', maxResults:50,
+                  order, regionCode:$('#region').value};
+    if(dias > 0){
+      // ventana temporal desplazada al azar para no traer siempre lo mismo
+      const jitter = Math.random()*0.4;                    // hasta 40% de corrimiento
+      const desde  = dias*(1+jitter);
+      base.publishedAfter = new Date(Date.now() - desde*86400000).toISOString();
+      if(jitter > 0.05) base.publishedBefore = new Date(Date.now() - (desde-dias)*86400000).toISOString();
+    }
 
-    const search = await ytGet('search', params);
-    const ids = search.items.map(it => it.id.videoId).filter(Boolean);
+    // Traer hasta 2 páginas para ampliar el pool (más variedad de canales)
+    let ids = [], page;
+    for(let p=0; p<2; p++){
+      const params = {...base};
+      if(page) params.pageToken = page;
+      const search = await ytGet('search', params);
+      ids.push(...search.items.map(it => it.id.videoId).filter(Boolean));
+      page = search.nextPageToken;
+      if(!page) break;
+    }
+    ids = shuffle([...new Set(ids)]).slice(0, 50);          // dedup + barajar + límite de la API
+
     if(!ids.length){ $('#status').textContent=''; render([]); return; }
 
     const det = await ytGet('videos', {part:'snippet,statistics', id:ids.join(',')});
@@ -601,8 +718,8 @@ function render(list, total){
           <div class="meta"><span>♥ ${fmt(v.likes)}</span><span>💬 ${fmt(v.comentarios)}</span>
             <span>${v.publicado}</span></div>
           <div class="actions">
-            <button class="ghost" onclick="reproducir(this, ${i})">▶ Reproducir aquí</button>
-            <button class="ghost" onclick="analizar(this, ${i})">Analizar con IA</button>
+            <button class="ghost" onclick="reproducir(this, ${i})">${t('reproducir')}</button>
+            <button class="ghost" onclick="analizar(this, ${i})">${t('analizarIA')}</button>
           </div>
         </div>
         <div class="playercol" id="player-${i}"></div>
@@ -616,7 +733,7 @@ function reproducir(btn, idx){
   const col = document.getElementById('player-' + idx);
   if(col.firstChild){           // ya hay reproductor → cerrar
     col.innerHTML = '';
-    btn.textContent = '▶ Reproducir aquí';
+    btn.textContent = t('reproducir');
     btn.classList.remove('on');
     return;
   }
@@ -629,7 +746,7 @@ function reproducir(btn, idx){
   fr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
   fr.setAttribute('allowfullscreen', '');
   col.appendChild(fr);
-  btn.textContent = '✕ Cerrar video';
+  btn.textContent = t('cerrar');
   btn.classList.add('on');
 }
 
@@ -645,7 +762,7 @@ async function thumbBase64(url){
 
 async function analizar(btn, idx){
   const v = RESULTS[idx];
-  btn.disabled = true; btn.textContent = 'pensando…';
+  btn.disabled = true; btn.textContent = t('pensando');
 
   const prompt = `Eres dos cosas a la vez: (A) analista experto en crecimiento de YouTube y
 (B) director de producción de video con IA generativa (Veo 3, Grok / otros modelos de texto-a-video).
@@ -662,7 +779,20 @@ DATOS
 Un VSR de ${v.vsr}x significa que consiguió ${v.vsr} veces más vistas que
 suscriptores tiene el canal: rompió su audiencia habitual.
 
-Responde TODO en español. Usa estas dos partes:
+${t('respondeEn')} Usa estas partes:
+
+═══════════════════════════════
+PARTE 0 · PUNTUACIONES
+═══════════════════════════════
+Antes que nada evalúa el video y devuelve SOLO números, una métrica por línea,
+encerrados EXACTAMENTE entre estas marcas y sin texto extra adentro:
+===SCORES_INICIO===
+HOOK: (0-10, fuerza del gancho del título/primeros segundos)
+PACKAGING: (0-10, miniatura + título como conjunto)
+RETENCION: (0-10, capacidad de mantener viendo según estructura)
+REPLICABILIDAD: (0-10, qué tan fácil es recrearlo)
+REPLICABLE_PCT: (0-100, % del video que se puede copiar tal cual)
+===SCORES_FIN===
 
 ═══════════════════════════════
 PARTE 1 · ANÁLISIS (breve)
@@ -774,8 +904,24 @@ sin texto extra dentro:
     const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
     if(!text) throw new Error('respuesta vacía de Gemini');
 
+    // Extraer puntuaciones (PARTE 0)
+    let work = text, scores = null;
+    {
+      const ci = work.indexOf('===SCORES_INICIO==='), cf = work.indexOf('===SCORES_FIN===');
+      if(ci !== -1 && cf !== -1 && cf > ci){
+        const raw = work.slice(ci + '===SCORES_INICIO==='.length, cf);
+        work = (work.slice(0, ci) + work.slice(cf + '===SCORES_FIN==='.length)).trim();
+        scores = {};
+        raw.split('\n').forEach(l => {
+          const m = l.match(/([A-Za-z_]+)\s*:\s*([\d.]+)/);
+          if(m) scores[m[1].toUpperCase()] = parseFloat(m[2]);
+        });
+        if(!Object.keys(scores).length) scores = null;
+      }
+    }
+
     // Separar SEO y master prompt del análisis usando las marcas
-    let work = text, seo = '';
+    let seo = '';
     const si = work.indexOf('===SEO_INICIO==='), sf = work.indexOf('===SEO_FIN===');
     if(si !== -1 && sf !== -1 && sf > si){
       seo = work.slice(si + '===SEO_INICIO==='.length, sf).trim();
@@ -789,6 +935,8 @@ sin texto extra dentro:
     }
 
     const host = btn.closest('.card');
+
+    const sr = scoreRow(scores); if(sr) host.appendChild(sr);
 
     const box = document.createElement('div');
     box.className = 'analysis'; box.textContent = analisis;
@@ -820,17 +968,23 @@ sin texto extra dentro:
       host.appendChild(mb);
     }
 
+    // Botón: descargar análisis como .MD
+    const dl = document.createElement('button');
+    dl.className = 'mdbtn'; dl.textContent = '⬇ ' + t('descargarMd');
+    dl.onclick = () => descargarMD({video:v, analisis, seo, master, scores});
+    host.appendChild(dl);
+
     // Guardar en el historial (este navegador)
     addHist({
       ts: Date.now(),
       video: {titulo:v.titulo, canal:v.canal, suscriptores:v.suscriptores, vistas:v.vistas,
               vsr:v.vsr, url:v.url, thumbnail:v.thumbnail, video_id:v.video_id, publicado:v.publicado},
-      analisis, seo, master
+      analisis, seo, master, scores
     });
 
     btn.remove();
   }catch(e){
-    btn.disabled = false; btn.textContent = 'Analizar con IA';
+    btn.disabled = false; btn.textContent = t('analizarIA');
     alert('Error en el análisis: ' + e.message);
   }
 }
@@ -856,7 +1010,7 @@ function delHist(ts){ setHist(getHist().filter(e => e.ts !== ts)); renderHist();
 function renderHist(){
   const h = getHist(), cont = $('#histList');
   cont.innerHTML = h.length ? h.map(e => histCard(e,false)).join('')
-    : '<div class="empty2">Todavía no analizaste ningún video. Andá a “Buscar”, encontrá un outlier y tocá “Analizar con IA”.</div>';
+    : '<div class="empty2">Todavía no analizaste ningún video. Andá a "Buscar", encontrá un outlier y tocá "Analizar con IA".</div>';
 }
 function renderGuiones(){
   const h = getHist().filter(e => e.master), cont = $('#guionList');
@@ -873,9 +1027,9 @@ function histCard(e, soloGuion){
     </div>
     <div class="hact">
       ${soloGuion
-        ? `<button class="ghost" onclick="copiarGuion(this, ${e.ts})">📋 copiar guion</button>`
-        : `<button class="ghost" onclick="verDetalle(this, ${e.ts})">ver análisis</button>`}
-      <button class="ghost" onclick="delHist(${e.ts})">borrar</button>
+        ? `<button class="ghost" onclick="copiarGuion(this, ${e.ts})">📋 ${t('copiarGuion')}</button>`
+        : `<button class="ghost" onclick="verDetalle(this, ${e.ts})">${t('verAnalisis')}</button>`}
+      <button class="ghost" onclick="delHist(${e.ts})">${t('borrar')}</button>
     </div>
   </article>`;
 }
@@ -890,8 +1044,9 @@ function verDetalle(btn, ts){
   const e = getHist().find(x => x.ts === ts); if(!e) return;
   const card = btn.closest('.hcard');
   const ya = card.querySelector('.hdetail');
-  if(ya){ ya.remove(); btn.textContent = 'ver análisis'; return; }
+  if(ya){ ya.remove(); btn.textContent = t('verAnalisis'); return; }
   const det = document.createElement('div'); det.className = 'hdetail';
+  const sr = scoreRow(e.scores); if(sr) det.appendChild(sr);
   const a = document.createElement('div'); a.className = 'analysis'; a.textContent = e.analisis || '(sin texto)';
   det.appendChild(a);
   if(e.seo){
@@ -909,7 +1064,11 @@ function verDetalle(btn, ts){
     const pre = document.createElement('pre'); pre.textContent = e.master;
     mb.appendChild(head); mb.appendChild(pre); det.appendChild(mb);
   }
-  card.appendChild(det); btn.textContent = 'ocultar';
+  const dl = document.createElement('button');
+  dl.className = 'mdbtn'; dl.textContent = '⬇ ' + t('descargarMd');
+  dl.onclick = () => descargarMD(e);
+  det.appendChild(dl);
+  card.appendChild(det); btn.textContent = t('ocultar');
 }
 
 /* ═══════════ Panel de administrador (sin servidor) ═══════════ */
@@ -966,6 +1125,208 @@ function adminCopy(btn){
     if((e.ctrlKey || e.metaKey) && k === 's'){ e.preventDefault(); return; }
   });
 })();
+
+/* ════════════════════════════════════════════════════════════════
+   ✦ MEJORAS: chips, feed, scores, descarga .MD e idioma ES/EN
+   ════════════════════════════════════════════════════════════════ */
+
+/* ───────── Nichos sugeridos (chips rotativos) ───────── */
+const NICHOS = ['recetas keto','finanzas personales','misterios sin resolver','rutinas de gym',
+  'curiosidades de la historia','tecnología y gadgets','cuentos de terror','motivación',
+  'datos de ciencia','tutoriales de IA','gameplays','reflexiones de vida','documentales cortos',
+  'storytime','reseñas de películas','viajes baratos','psicología','autos clásicos','cocina fácil',
+  'productividad','criptomonedas','astronomía','animales exóticos','mitología','true crime'];
+
+function pintarChips(){
+  const cont = $('#chips'); if(!cont) return;
+  const pool = shuffle([...NICHOS]).slice(0, 6);
+  cont.innerHTML = pool.map(n =>
+      `<button class="chip" onclick="usarChip('${n.replace(/'/g,"\\'")}')">${esc(n)}</button>`).join('')
+    + `<button class="chip ref" onclick="pintarChips()" title="otras sugerencias">↻</button>`;
+}
+function usarChip(n){ $('#q').value = n; buscar(); }
+
+/* ───────── Feed de outliers recientes (se actualiza) ───────── */
+async function cargarFeed(){
+  const wrap = $('#feedWrap'), row = $('#feedRow');
+  if(!wrap || !row || !KEYS.yt) return;
+  wrap.hidden = false;
+  row.innerHTML = Array.from({length:6}).map(()=>'<div class="skel"></div>').join('');
+  const nicho = NICHOS[Math.random()*NICHOS.length|0];
+  const nf = $('#feedNicho'); if(nf) nf.textContent = '· ' + nicho;
+  try{
+    const order = ORDERS[Math.random()*ORDERS.length|0];
+    const search = await ytGet('search', {part:'snippet', q:nicho, type:'video',
+      maxResults:25, order, regionCode:$('#region').value,
+      publishedAfter:new Date(Date.now() - 90*86400000).toISOString()});
+    const ids = search.items.map(it => it.id.videoId).filter(Boolean);
+    if(!ids.length){ wrap.hidden = true; return; }
+    const det = await ytGet('videos', {part:'snippet,statistics', id:ids.join(',')});
+    const chIds = [...new Set(det.items.map(v => v.snippet.channelId))];
+    const ch = await ytGet('channels', {part:'statistics', id:chIds.join(',')});
+    const subs = {}; ch.items.forEach(c => subs[c.id] = +(c.statistics.subscriberCount||0));
+    const top = det.items.map(v => {
+      const vistas = +(v.statistics.viewCount||0), s = subs[v.snippet.channelId] || 0;
+      return {titulo:v.snippet.title, canal:v.snippet.channelTitle, vistas, suscriptores:s,
+        vsr: s>0 ? +(vistas/s).toFixed(1) : 0, publicado:v.snippet.publishedAt.slice(0,10),
+        url:'https://youtube.com/watch?v='+v.id, thumbnail:v.snippet.thumbnails.high.url};
+    }).filter(v => v.vsr >= 5).sort((a,b) => b.vsr - a.vsr).slice(0, 8);
+    if(!top.length){ wrap.hidden = true; return; }
+    row.innerHTML = top.map(v => `
+      <a class="fcard" href="${v.url}" target="_blank" rel="noopener" title="${esc(v.titulo)}">
+        <div class="fthumb">
+          <img src="${v.thumbnail}" loading="lazy" alt="" onerror="this.style.opacity=.25">
+          <span class="fbadge">${v.vsr}× VSR</span>
+        </div>
+        <div class="fbody">
+          <h4>${esc(v.titulo)}</h4>
+          <div class="fm">${esc(v.canal)} · ${fmt(v.vistas)} ${LANG==='es'?'vistas':'views'}</div>
+        </div>
+      </a>`).join('');
+  }catch(e){ wrap.hidden = true; }
+}
+function refrescarFeed(){ cargarFeed(); }
+
+let _feedTries = 0;
+function initFeed(){
+  if(!KEYS.yt) return;                                   // sin clave de YouTube no se puede
+  if($('#gate').classList.contains('hidden')){ cargarFeed(); return; }  // ya logueado
+  if(_feedTries++ < 200) setTimeout(initFeed, 800);      // espera al login (≈2.5 min máx)
+}
+
+/* ───────── Fila de puntuaciones ───────── */
+function scoreRow(s){
+  if(!s) return null;
+  const el = document.createElement('div'); el.className = 'scores';
+  const defs = [['HOOK','Hook'], ['PACKAGING','Packaging'], ['RETENCION','Retención'],
+                ['REPLICABILIDAD','Replicable'], ['REPLICABLE_PCT','% Copiable','rep']];
+  let n = 0;
+  defs.forEach(([k, lbl, cls]) => {
+    if(s[k] == null) return;
+    n++;
+    const d = document.createElement('div'); d.className = 'score' + (cls ? ' '+cls : '');
+    const sv = document.createElement('div'); sv.className = 'sv';
+    sv.textContent = (k === 'REPLICABLE_PCT') ? (s[k] + '%') : s[k];
+    const sl = document.createElement('div'); sl.className = 'sl'; sl.textContent = lbl;
+    d.appendChild(sv); d.appendChild(sl); el.appendChild(d);
+  });
+  return n ? el : null;
+}
+
+/* ───────── Descargar análisis como .MD ───────── */
+function descargarMD(e){
+  const v = e.video || {}, s = e.scores || {};
+  const val = k => (s[k] != null ? s[k] : '—');
+  let md = `# Análisis de outlier — ${v.titulo || ''}\n\n`;
+  md += `- **Canal:** ${v.canal || ''} (${fmt(v.suscriptores || 0)} subs)\n`;
+  md += `- **Vistas:** ${fmt(v.vistas || 0)} · **VSR:** ${v.vsr || 0}×\n`;
+  md += `- **Publicado:** ${v.publicado || ''}\n`;
+  md += `- **URL:** ${v.url || ''}\n\n`;
+  if(e.scores){
+    md += `## Puntuaciones\n\n`;
+    md += `| Hook | Packaging | Retención | Replicable | % Copiable |\n`;
+    md += `|------|-----------|-----------|------------|------------|\n`;
+    md += `| ${val('HOOK')} | ${val('PACKAGING')} | ${val('RETENCION')} | ${val('REPLICABILIDAD')} | ${val('REPLICABLE_PCT')}% |\n\n`;
+  }
+  md += `## Análisis\n\n${e.analisis || ''}\n\n`;
+  if(e.seo)    md += `## SEO y publicación\n\n${e.seo}\n\n`;
+  if(e.master) md += `## Master prompt\n\n\`\`\`\n${e.master}\n\`\`\`\n`;
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const a = document.createElement('a');
+  const slug = (v.titulo || 'analisis').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g,'').slice(0, 40) || 'analisis';
+  a.href = URL.createObjectURL(blob);
+  a.download = 'outlier-' + slug + '.md';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ───────── Idioma ES / EN ───────── */
+const I18N = {
+  es:{
+    eyebrow:'detección de anomalías · youtube',
+    h1a:'Encuentra el video que ', h1em:'rompió', h1b:' su propio canal.',
+    sub:'Busca un nicho y detecta los outliers: videos con muchas más vistas que suscriptores tiene su canal. Luego pregúntale a la IA por qué funcionó.',
+    qph:'nicho o tema — ej: recetas keto', go:'Buscar outliers',
+    tabBuscar:'🔎 Buscar', tabHist:'🕘 Historial', tabGui:'📝 Mis guiones', tabAdmin:'🛡 Admin',
+    feedTitle:'Últimos outliers detectados', feedRefresh:'otro nicho',
+    histTitle:'Historial de análisis', histSub:'Cada análisis que generás queda guardado en este navegador.',
+    guiTitle:'Mis guiones', guiSub:'Los master prompts que generaste, listos para copiar y pegar en tu IA.',
+    keysTitle:'Tus claves de API', save:'Guardar claves',
+    analizando:'analizando YouTube…', pegaClaves:'pegá primero tus dos claves ↑',
+    analizarIA:'Analizar con IA', pensando:'pensando…', reproducir:'▶ Reproducir aquí', cerrar:'✕ Cerrar video',
+    verAnalisis:'ver análisis', ocultar:'ocultar', descargarMd:'descargar .MD',
+    copiarGuion:'copiar guion', borrar:'borrar',
+    inicio:'← inicio', claves:'⚙ claves', salir:'salir',
+    footer:'corre en tu navegador · datos vía YouTube API + análisis con IA',
+    respondeEn:'Responde TODO en español.'
+  },
+  en:{
+    eyebrow:'anomaly detection · youtube',
+    h1a:'Find the video that ', h1em:'broke', h1b:' its own channel.',
+    sub:'Search a niche and spot the outliers: videos with way more views than the channel has subscribers. Then ask the AI why it worked.',
+    qph:'niche or topic — e.g. keto recipes', go:'Find outliers',
+    tabBuscar:'🔎 Search', tabHist:'🕘 History', tabGui:'📝 My scripts', tabAdmin:'🛡 Admin',
+    feedTitle:'Latest outliers detected', feedRefresh:'another niche',
+    histTitle:'Analysis history', histSub:'Every analysis you generate is saved in this browser.',
+    guiTitle:'My scripts', guiSub:'The master prompts you generated, ready to copy and paste into your AI.',
+    keysTitle:'Your API keys', save:'Save keys',
+    analizando:'analyzing YouTube…', pegaClaves:'paste your two keys first ↑',
+    analizarIA:'Analyze with AI', pensando:'thinking…', reproducir:'▶ Play here', cerrar:'✕ Close video',
+    verAnalisis:'view analysis', ocultar:'hide', descargarMd:'download .MD',
+    copiarGuion:'copy script', borrar:'delete',
+    inicio:'← home', claves:'⚙ keys', salir:'log out',
+    footer:'runs in your browser · data via YouTube API + AI analysis',
+    respondeEn:'Respond ENTIRELY in English.'
+  }
+};
+let LANG = localStorage.getItem('jmbots_lang') || 'es';
+function t(k){ return (I18N[LANG] && I18N[LANG][k]) || I18N.es[k] || k; }
+
+function aplicarIdioma(){
+  const d = I18N[LANG];
+  const set = (sel, val) => { const el = $(sel); if(el) el.textContent = val; };
+  document.documentElement.lang = LANG;
+  set('.eyebrow', d.eyebrow);
+  const h1 = $('.hero h1');
+  if(h1) h1.innerHTML = esc(d.h1a) + '<em>' + esc(d.h1em) + '</em>' + esc(d.h1b);
+  set('.hero .sub', d.sub);
+  const q = $('#q'); if(q) q.placeholder = d.qph;
+  set('#go', d.go);
+  set('.tab[data-view="buscar"]', d.tabBuscar);
+  set('.tab[data-view="historial"]', d.tabHist);
+  set('.tab[data-view="guiones"]', d.tabGui);
+  set('#tab-admin', d.tabAdmin);
+  set('#feedTitle', d.feedTitle);
+  set('#feedRefTxt', d.feedRefresh);
+  set('#view-historial .vtitle', d.histTitle);
+  set('#view-historial .vsub', d.histSub);
+  set('#view-guiones .vtitle', d.guiTitle);
+  set('#view-guiones .vsub', d.guiSub);
+  set('.keys h2', d.keysTitle);
+  set('.keys .btn-gold', d.save);
+  set('#homeBtn', d.inicio);
+  set('#keysBtn', d.claves);
+  set('#logout', d.salir);
+  const f = $('footer');
+  if(f) f.innerHTML = 'JM&nbsp;BOTS<b>.outliers</b> · ' + esc(d.footer);
+  const lb = $('#langBtn'); if(lb) lb.textContent = (LANG === 'es') ? 'EN' : 'ES';
+}
+function toggleIdioma(){
+  LANG = (LANG === 'es') ? 'en' : 'es';
+  try{ localStorage.setItem('jmbots_lang', LANG); }catch{}
+  aplicarIdioma();
+  // refrescar lo que ya esté en pantalla para que tome el idioma nuevo
+  if(!$('#view-historial').hidden) renderHist();
+  if(!$('#view-guiones').hidden)   renderGuiones();
+}
+
+/* ───────── Arranque ───────── */
+window.addEventListener('DOMContentLoaded', () => {
+  aplicarIdioma();
+  pintarChips();
+  initFeed();
+});
 </script>
 </body>
 </html>
+
